@@ -3,9 +3,16 @@ import { env } from '~/config/environment'
 import express from 'express'
 import exitHook from 'async-exit-hook'
 import { CONNECT_DB, GET_DB, CLOSE_DB } from '~/config/mongodb'
+import { APIs_V1 } from '~/routes/v1'
 
 const START_SERVER = () => {
   const app = express()
+
+  //Enable req.body json data
+  app.use(express.json())
+
+  //Use APIs_V1
+  app.use('/v1', APIs_V1)
 
   const hostname = env.APP_HOST
   const port = env.APP_PORT
