@@ -1,18 +1,27 @@
 /* eslint-disable no-console */
 import { env } from '~/config/environment'
 import express from 'express'
+import cors from 'cors'
+import { corsOptions } from '~/config/cors'
 import exitHook from 'async-exit-hook'
 import { CONNECT_DB, GET_DB, CLOSE_DB } from '~/config/mongodb'
 import { APIs_V1 } from '~/routes/v1'
+import { errorHandlingMiddleware } from '~/middlewares/errorHandingMiddleware'
 
 const START_SERVER = () => {
   const app = express()
+
+  //Xử lý cors
+  app.use(cors(corsOptions))
 
   //Enable req.body json data
   app.use(express.json())
 
   //Use APIs_V1
   app.use('/v1', APIs_V1)
+
+  //Middleware xử lý lỗi tập trung
+  app.use(errorHandlingMiddleware)
 
   const hostname = env.APP_HOST
   const port = env.APP_PORT
