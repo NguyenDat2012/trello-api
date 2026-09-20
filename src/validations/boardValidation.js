@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '../utils/ApiError.js'
+import { BOARD_TYPE } from '~/utils/constants.js'
 
 const createNew = async (req, res, next) => {
   const correctCondition = Joi.object({
@@ -18,7 +19,8 @@ const createNew = async (req, res, next) => {
       'string.min': 'Description must be at least 3 characters long',
       'string.max': 'Description cannot exceed 256 characters',
       'string.trim': 'Description cannot have leading or trailing whitespace'
-    })
+    }),
+    type: Joi.string().valid(BOARD_TYPE.PUBLIC, BOARD_TYPE.PRIVATE).required()
   })
   try {
     //Chỉ định abortEarly: fasle để Joi trả về tất cả các lỗi thay vì dừng lại sau lỗi đầu tiên

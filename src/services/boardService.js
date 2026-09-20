@@ -3,6 +3,7 @@ import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
+import { cloneDeep } from 'lodash'
 
 
 const createNew = async (reqBody) => {
@@ -15,11 +16,9 @@ const createNew = async (reqBody) => {
 
     //Gọi tới tầng Model để xử lý lưu bản ghi newboard vào trong Database
     const createBoard = await boardModel.createNew(newBoard)
-    console.log(createBoard)
 
     // Lấy bản ghi board sau khi gọi
     const getNewBoard = await boardModel.findOneById(createBoard.insertedId)
-    console.log(getNewBoard)
 
     //Làm thêm các xử lý logic khác với các Collection khác tùy đặc thù dự án
     //Thông báo email, hoặc thông báo về cho admin khi có 1 board mới được tạo
@@ -39,8 +38,17 @@ const getDetails = async (boardId) => {
     if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
     }
+
+    const resBoard = cloneDeep(board)
+
+    //Đưa card về đúng column của nó
+    resBoard.columns.forEach(column => {
+      column.cards = resBoard.cards.filter(card => card.columnId.equals(column._id))
+    })
+
+    delete resBoard.cards
     //Trả kết quả về, trong service luôn phải có return
-    return board
+    return resBoard
   } catch (error) {
     throw error
   }
