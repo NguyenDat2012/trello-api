@@ -18,8 +18,6 @@ const createNew = async (req, res, next) => {
 
 const getDetails = async (req, res, next) => {
   try {
-    // console.log('req.params: ', req.params)
-
     const boardId = req.params.id
 
     //Điều hướng dữ liệu sang tầng Service
@@ -33,7 +31,20 @@ const getDetails = async (req, res, next) => {
   }
 }
 
+const update = async (req, res, next) => {
+  try {
+    const boardId = req.params.id
+    const updateBoard = await boardService.update(boardId, req.body)
+    //Có kết quả thì trả về cho client
+    res.status(StatusCodes.OK).json(updateBoard)
+  } catch (error) {
+    next(error)
+    // res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ errors: error.message })
+  }
+}
+
 export const boardController = {
   createNew,
-  getDetails
+  getDetails,
+  update
 }
