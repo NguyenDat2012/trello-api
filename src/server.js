@@ -31,12 +31,12 @@ const START_SERVER = () => {
 
   if (env.BUILD_MODE === 'production') {
     // Render cấp PORT qua biến môi trường, và cần bind vào 0.0.0.0
-    app.listen(process.env.PORT, '0.0.0.0', () => {
+    app.listen(process.env.PORT, () => {
       console.log(`Production: Running on port ${process.env.PORT}`)
     })
   } else {
     app.listen(env.APP_PORT, env.APP_HOST, () => {
-      console.log(`Local DEV: http://${env.APP_HOST}:${env.APP_PORT}/`)
+      console.log(`Local DEV: http://${env.LOCAL_DEV_APP_HOST}:${env.LOCAL_DEV_APP_PORT}/`)
     })
   }
   exitHook(() => {
