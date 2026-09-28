@@ -105,7 +105,12 @@ const update = async (boardId, updateData) => {
         delete updateData[fieldName]
       }
     })
-    console.log(updateData)
+    //console.log(updateData)
+
+    //Đối với những dữ liệu liên quan đến ObjectId
+    if (updateData.columnOrderIds) {
+      updateData.columnOrderIds = updateData.columnOrderIds.map(_id => (new ObjectId(_id)))
+    }
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(boardId) },
       { $set: updateData },
@@ -117,6 +122,19 @@ const update = async (boardId, updateData) => {
   }
 }
 
+//Lấy 1 phần tử columnId ra khỏi mảng columnOrderIds
+const pullColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(column.boardId) },
+      { $pull: { columnOrderIds: new ObjectId(column._id) } },
+      { returnDocument: 'after' }
+    )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
@@ -124,5 +142,6 @@ export const boardModel = {
   findOneById,
   getDetails,
   pushColumnOrderIds,
-  update
+  update,
+  pullColumnOrderIds
 }
