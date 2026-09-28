@@ -23,19 +23,22 @@ const START_SERVER = () => {
   //Middleware xử lý lỗi tập trung
   app.use(errorHandlingMiddleware)
 
-  const hostname = env.APP_HOST
-  const port = env.APP_PORT
-
   app.get('/', async (req, res) => {
     //console.log(await GET_DB().listCollections().toArray())
 
     res.end('<h1>Hello World!</h1><hr>')
   })
 
-  app.listen(port, hostname, () => {
-    // eslint-disable-next-line no-console
-    console.log(`Hello Trung Quan Dev, I am running at http://${ hostname }:${ port }/`)
-  })
+  if (env.BUILD_MODE === 'production') {
+    // Render cấp PORT qua biến môi trường, và cần bind vào 0.0.0.0
+    app.listen(process.env.PORT, '0.0.0.0', () => {
+      console.log(`Production: Running on port ${process.env.PORT}`)
+    })
+  } else {
+    app.listen(env.APP_PORT, env.APP_HOST, () => {
+      console.log(`Local DEV: http://${env.APP_HOST}:${env.APP_PORT}/`)
+    })
+  }
   exitHook(() => {
     CLOSE_DB()
   })
@@ -50,7 +53,7 @@ const START_SERVER = () => {
     START_SERVER()
   } catch (error) {
     console.error('Error connecting to MongoDB:', error)
-    process.exit(0) // Exit the process with an error code
+    process.exit(1) // Exit the process with an error code
   }
 })()
 
