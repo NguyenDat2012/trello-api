@@ -35,7 +35,7 @@ const START_SERVER = () => {
       console.log(`Production: Running on port ${process.env.PORT}`)
     })
   } else {
-    app.listen(env.APP_PORT, env.APP_HOST, () => {
+    app.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
       console.log(`Local DEV: http://${env.LOCAL_DEV_APP_HOST}:${env.LOCAL_DEV_APP_PORT}/`)
     })
   }
